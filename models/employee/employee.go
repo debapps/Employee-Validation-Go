@@ -12,7 +12,7 @@ type Employee struct {
 
 // This function shows employee details.
 func (e *Employee) ShowEmp() {
-	fmt.Printf("\nEmployee Details:\nEmployee ID - %s \nName - %s %s \nAddress Line 1 - %s \nAddress Line 2 - %s \nCity - %s \nState - %s \nZip Code - %s\n", e.EmployeeID, e.FirstName, e.LastName, e.AddressLine1, e.AddressLine2, e.City, e.State, e.ZipCode)
+	fmt.Printf("\nEmployee Details:\nEmployee ID - %s \nName - %s %s \nAddress Line 1 - %s \nAddress Line 2 - %s \nCity - %s \nState - %s \nZip Code - %s\n\n", e.EmployeeID, e.FirstName, e.LastName, e.AddressLine1, e.AddressLine2, e.City, e.State, e.ZipCode)
 }
 
 // This function validates Employee ID based on following criteria:

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"empvalid/utilities/csvhandle"
+	"empvalid/utilities/emputils"
 	"fmt"
 	"strings"
 )
@@ -13,8 +15,28 @@ func main() {
 	fmt.Printf("%60s\n", programName)
 	fmt.Println(strings.Repeat("-", 100))
 
-	// e := employee.Employee{"1234", "Debaditya", "Bhar", "486 G T Road", "Rajlaxmi Appartment", "Serampore", "WB", "712202"}
-	// empData := e.FormatEmpData()
-	// emp := employee.Employee{empData[0], empData[1], empData[2], empData[3], empData[4], empData[5], empData[6], empData[7]}
-	// emp.ShowEmp()
+	// Input and Output paths of the data files.
+	inFilePath := "./data/input/Employee_Data.CSV"
+	outFilePath := "./data/output/Employee_Data.ftp"
+
+	// Read the input file and get the employee list.
+	byteStram := csvhandle.GetFileStream(inFilePath)
+	recs := csvhandle.GetCSVData(byteStram)
+	empList := emputils.GetFileEmpList(recs)
+
+	// Traverse Employee List. Checks for valid employee record.
+	// Writes the valid records into output file.
+	writer := csvhandle.GetCSVWriter(outFilePath)
+
+	for _, emp := range empList {
+		if emp.ValidateEmpFields() {
+			fmt.Printf("\n\nWritting Valid Employee into File - %s \n", outFilePath)
+			emp.ShowEmp()
+			writer.WriteCSVData(emp.FormatEmpData())
+		} else {
+			fmt.Println("\nSkipping Invalid Employee -")
+			emp.ShowEmp()
+		}
+	}
+
 }
