@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awsS3handle"
 	"empvalid/utilities/csvhandle"
 	"empvalid/utilities/emputils"
 	"fmt"
@@ -16,21 +17,33 @@ func main() {
 	fmt.Println(strings.Repeat("-", 100))
 
 	// Input and Output paths of the data files.
-	inFilePath := "./data/input/Employee_Data.CSV"
+	// inFilePath := "./data/input/Employee_Data.CSV"
 	outFilePath := "./data/output/Employee_Data.ftp"
 
+	// Input and Output bucket and object.
+	inBucketName := "employee-data-raw"
+	outBucketName := "employee-data-ftp"
+	inObjectKey := "Employee_Data.CSV"
+	outObjectKey := "Employee_Data.FTP"
+
+	// Read the input file from the S3 bucket object specified.
+	s3Client := awsS3handle.InitS3Client()
+	byteStream := s3Client.GetObjectContent(inBucketName, inObjectKey)
+
 	// Read the input file and get the employee list.
-	byteStram := csvhandle.GetFileStream(inFilePath)
-	recs := csvhandle.GetCSVData(byteStram)
+	// byteStream := csvhandle.GetFileStream(inFilePath)
+	recs := csvhandle.GetCSVData(byteStream)
 	empList := emputils.GetFileEmpList(recs)
+	// fmt.Println(empList)
 
 	// Traverse Employee List. Checks for valid employee record.
 	// Writes the valid records into output file.
+
 	writer := csvhandle.GetCSVWriter(outFilePath)
 
 	for _, emp := range empList {
 		if emp.ValidateEmpFields() {
-			fmt.Printf("\n\nWritting Valid Employee into File - %s \n", outFilePath)
+			fmt.Println("\n\nWritting Valid Employee")
 			emp.ShowEmp()
 			writer.WriteCSVData(emp.FormatEmpData())
 		} else {
@@ -39,4 +52,15 @@ func main() {
 		}
 	}
 
+	// Upload the output file into S3 bucket.
+	s3Client.UploadObject(outBucketName, outObjectKey, outFilePath)
+
+	// Remove outfile.
+	// fmt.Printf("\nRemoving %s ..", outFilePath)
+	// err := os.Remove(outFilePath)
+	// if err != nil {
+	// 	panic(err.Error())
+	// }
+
+	fmt.Println("Completed!!")
 }
