@@ -53,6 +53,9 @@ func (s S3Client) UploadObject(bucketName string, objectKey string, filePath str
 	file, e := os.Open(filePath)
 	checkError(e)
 
+	// Close the file.
+	defer file.Close()
+
 	// Upload the file into the bucket.
 	_, err := s.S3.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(bucketName),
@@ -67,8 +70,6 @@ func (s S3Client) UploadObject(bucketName string, objectKey string, filePath str
 	fmt.Printf("\nBucket Name - %s \nObject - %s \nFileName - %s\n", bucketName, objectKey, filePath)
 	fmt.Println(strings.Repeat("-", 100))
 
-	// Close the file.
-	file.Close()
 }
 
 // This function gets the AWS system configuration.

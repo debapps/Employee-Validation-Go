@@ -24,7 +24,7 @@ func main() {
 	inBucketName := "employee-data-raw"
 	outBucketName := "employee-data-ftp"
 	inObjectKey := "Employee_Data.CSV"
-	outObjectKey := "Employee_Data.FTP"
+	outObjectKey := "Employee-Data-Fixed-Width.txt"
 
 	// Read the input file from the S3 bucket object specified.
 	s3Client := awsS3handle.InitS3Client()
